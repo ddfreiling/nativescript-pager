@@ -8,12 +8,14 @@ export declare abstract class Pager extends View implements AddArrayFromBuilder 
     private _pageSpacing;
     static selectedIndexProperty: Property;
     static itemsProperty: Property;
+    static showNativePageIndicatorProperty: Property;
     static selectedIndexChangedEvent: string;
     _addArrayFromBuilder(name: string, value: Array<any>): void;
     items: Array<any>;
     selectedIndex: number | any;
     disableSwipe: boolean;
     pageSpacing: number;
+    showNativePageIndicator: boolean;
     abstract updateNativeItems(oldItems: Array<View>, newItems: Array<View>): void;
     abstract updateNativeIndex(oldIndex: number, newIndex: number): void;
 }

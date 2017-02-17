@@ -81,10 +81,21 @@ var Pager = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Pager.prototype, "showNativePageIndicator", {
+        get: function () {
+            return this._getValue(Pager.showNativePageIndicatorProperty);
+        },
+        set: function (value) {
+            this._setValue(Pager.showNativePageIndicatorProperty, value);
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Pager;
 }(view_1.View));
 Pager.selectedIndexProperty = new dependency_observable_1.Property("selectedIndex", "Pager", new proxy_1.PropertyMetadata(0, dependency_observable_1.PropertyMetadataSettings.None, null, null, onSelectedIndexChanged));
 Pager.itemsProperty = new dependency_observable_1.Property("items", "Pager", new proxy_1.PropertyMetadata(undefined, dependency_observable_1.PropertyMetadataSettings.AffectsLayout, null, null, onItemsChanged));
+Pager.showNativePageIndicatorProperty = new dependency_observable_1.Property("showNativePageIndicator", "Pager", new proxy_1.PropertyMetadata(false));
 Pager.selectedIndexChangedEvent = "selectedIndexChanged";
 exports.Pager = Pager;
 var PagerItem = (function (_super) {

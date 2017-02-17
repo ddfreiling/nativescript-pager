@@ -23,8 +23,6 @@ var Pager = (function (_super) {
         _this._ios = UIPageViewController.alloc().initWithTransitionStyleNavigationOrientationOptions(_this._transformer, _this._orientation, _this._options);
         _this._ios.dataSource = PagerDataSource.initWithOwner(that);
         _this._ios.delegate = PagerViewControllerDelegate.initWithOwner(that);
-        var pc = _this._nativeView.subviews[0];
-        pc.hidden = true;
         var sv = _this._nativeView.subviews[1];
         if (_this.borderRadius) {
             sv.layer.cornerRadius = _this.borderRadius;
@@ -215,7 +213,7 @@ var PagerDataSource = (function (_super) {
     };
     PagerDataSource.prototype.pageViewControllerViewControllerBeforeViewController = function (pageViewController, viewControllerBefore) {
         var pos = viewControllerBefore.tag;
-        if (pos === 0) {
+        if (pos === 0 || !this.owner || !this.owner.items) {
             return null;
         }
         else {
@@ -225,8 +223,7 @@ var PagerDataSource = (function (_super) {
     };
     PagerDataSource.prototype.pageViewControllerViewControllerAfterViewController = function (pageViewController, viewControllerAfter) {
         var pos = viewControllerAfter.tag;
-        var count = this.presentationCountForPageViewController(pageViewController);
-        if (pos === count - 1) {
+        if (!this.owner || !this.owner.items || this.owner.items.length - 1 === pos) {
             return null;
         }
         else {
@@ -234,8 +231,8 @@ var PagerDataSource = (function (_super) {
         }
     };
     PagerDataSource.prototype.presentationCountForPageViewController = function (pageViewController) {
-        if (!this.owner || !this.owner.items) {
-            return 0;
+        if (!this.owner || !this.owner.items || !this.owner.showNativePageIndicator) {
+            return -1;
         }
         return this.owner.items.length;
     };
