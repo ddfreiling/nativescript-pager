@@ -1,12 +1,11 @@
-"use strict";
-var dependency_observable_1 = require("ui/core/dependency-observable");
-var proxy_1 = require("ui/core/proxy");
-var view_1 = require("ui/core/view");
-var types = require("utils/types");
-var knownCollections;
+import { PropertyMetadataSettings, Property } from "ui/core/dependency-observable";
+import { PropertyMetadata } from "ui/core/proxy";
+import { View } from "ui/core/view";
+import * as types from "utils/types";
+export var knownCollections;
 (function (knownCollections) {
     knownCollections.items = "items";
-})(knownCollections = exports.knownCollections || (exports.knownCollections = {}));
+})(knownCollections || (knownCollections = {}));
 function onItemsChanged(data) {
     var pager = data.object;
     if (data.newValue) {
@@ -92,17 +91,18 @@ var Pager = (function (_super) {
         configurable: true
     });
     return Pager;
-}(view_1.View));
-Pager.selectedIndexProperty = new dependency_observable_1.Property("selectedIndex", "Pager", new proxy_1.PropertyMetadata(0, dependency_observable_1.PropertyMetadataSettings.None, null, null, onSelectedIndexChanged));
-Pager.itemsProperty = new dependency_observable_1.Property("items", "Pager", new proxy_1.PropertyMetadata(undefined, dependency_observable_1.PropertyMetadataSettings.AffectsLayout, null, null, onItemsChanged));
-Pager.showNativePageIndicatorProperty = new dependency_observable_1.Property("showNativePageIndicator", "Pager", new proxy_1.PropertyMetadata(false));
+}(View));
+export { Pager };
+Pager.selectedIndexProperty = new Property("selectedIndex", "Pager", new PropertyMetadata(0, PropertyMetadataSettings.None, null, null, onSelectedIndexChanged));
+Pager.itemsProperty = new Property("items", "Pager", new PropertyMetadata(undefined, PropertyMetadataSettings.AffectsLayout, null, null, onItemsChanged));
+Pager.showNativePageIndicatorProperty = new Property("showNativePageIndicator", "Pager", new PropertyMetadata(false));
 Pager.selectedIndexChangedEvent = "selectedIndexChanged";
-exports.Pager = Pager;
 var PagerItem = (function (_super) {
     __extends(PagerItem, _super);
     function PagerItem() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PagerItem;
-}(view_1.View));
-exports.PagerItem = PagerItem;
+}(View));
+export { PagerItem };
+//# sourceMappingURL=common.js.map
