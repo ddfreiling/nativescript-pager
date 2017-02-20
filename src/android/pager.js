@@ -1,7 +1,8 @@
-import { PropertyMetadataSettings, Property } from "ui/core/dependency-observable";
-import { PropertyMetadata } from "ui/core/proxy";
-import * as common from "../common";
-import * as app from "application";
+"use strict";
+var dependency_observable_1 = require("ui/core/dependency-observable");
+var proxy_1 = require("ui/core/proxy");
+var common = require("../common");
+var app = require("application");
 function onPagesCountChanged(data) {
     var item = data.object;
     item.updatePagesCount(item.pagesCount);
@@ -63,14 +64,11 @@ var Pager = (function (_super) {
     Pager.prototype._createUI = function () {
         var that = new WeakRef(this);
         if (this.disableSwipe) {
-            this._android = new TNSViewPager(app.android.context, true); //new android.support.v4.view.ViewPager(this._context);
+            this._android = new TNSViewPager(app.android.context, true);
         }
         else {
-            this._android = new TNSViewPager(app.android.context); //new android.support.v4.view.ViewPager(this._context);
+            this._android = new TNSViewPager(app.android.context);
         }
-        // this._android.setForegroundGravity(android.view.Gravity.FILL)
-        // const lp = new android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.FILL_PARENT)
-        // this._android.setLayoutParams(lp);
         this._android.setOnPageChangeListener(new android.support.v4.view.ViewPager.OnPageChangeListener({
             onPageSelected: function (position) {
                 var owner = that.get();
@@ -103,13 +101,11 @@ var Pager = (function (_super) {
         }
     };
     Pager.prototype.updateNativeIndex = function (oldIndex, newIndex) {
-        // console.log(`Pager.updateNativeIndex ${newIndex}`);
         if (this._android) {
             this._android.setCurrentItem(newIndex);
         }
     };
     Pager.prototype.updateNativeItems = function (oldItems, newItems) {
-        // console.log(`Pager.updateNativeItems: ${newItems ? newItems.length : 0}`);
         if (oldItems) {
             this._pagerAdapter.notifyDataSetChanged();
         }
@@ -207,8 +203,8 @@ var Pager = (function (_super) {
     };
     return Pager;
 }(common.Pager));
-export { Pager };
-Pager.pagesCountProperty = new Property("pagesCount", "Pager", new PropertyMetadata(undefined, PropertyMetadataSettings.None, onPagesCountChanged));
+Pager.pagesCountProperty = new dependency_observable_1.Property("pagesCount", "Pager", new proxy_1.PropertyMetadata(undefined, dependency_observable_1.PropertyMetadataSettings.None, onPagesCountChanged));
+exports.Pager = Pager;
 var PagerAdapter = (function (_super) {
     __extends(PagerAdapter, _super);
     function PagerAdapter(owner) {
@@ -235,7 +231,7 @@ var PagerAdapter = (function (_super) {
     };
     return PagerAdapter;
 }(android.support.v4.view.PagerAdapter));
-export { PagerAdapter };
+exports.PagerAdapter = PagerAdapter;
 var TNSViewPager = (function (_super) {
     __extends(TNSViewPager, _super);
     function TNSViewPager(context, disableSwipe) {
@@ -263,5 +259,4 @@ var TNSViewPager = (function (_super) {
     };
     return TNSViewPager;
 }(android.support.v4.view.ViewPager));
-export { TNSViewPager };
-//# sourceMappingURL=pager.js.map
+exports.TNSViewPager = TNSViewPager;

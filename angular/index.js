@@ -1,8 +1,9 @@
-import { Component, NgModule } from "@angular/core";
-import { registerElement, TEMPLATE } from "nativescript-angular/element-registry";
-import { NativeScriptFormsModule } from "nativescript-angular/forms";
-import { View } from "ui/core/view";
-import { Placeholder } from "ui/placeholder";
+"use strict";
+var core_1 = require("@angular/core");
+var element_registry_1 = require("nativescript-angular/element-registry");
+var forms_1 = require("nativescript-angular/forms");
+var view_1 = require("ui/core/view");
+var placeholder_1 = require("ui/placeholder");
 var pagerMeta = {
     skipAddToDom: false,
     insertChild: function (parent, child, index) {
@@ -11,12 +12,12 @@ var pagerMeta = {
         if (!Array.isArray(pager.items)) {
             pager.items = [];
         }
-        if (child instanceof Placeholder) {
+        if (child instanceof placeholder_1.Placeholder) {
         }
-        else if (child.nodeName === TEMPLATE) {
+        else if (child.nodeName === element_registry_1.TEMPLATE) {
             child.templateParent = parent;
         }
-        if (child.nodeName !== "#text" && child instanceof View) {
+        if (child.nodeName !== "#text" && child instanceof view_1.View) {
             var items = (pager.views || []).concat([childView]);
             items.forEach(function (item) {
                 pager.items.push(item);
@@ -28,30 +29,29 @@ var pagerMeta = {
         var childView = child;
     }
 };
-registerElement("Pager", function () { return require("../").Pager; }, pagerMeta);
+element_registry_1.registerElement("Pager", function () { return require("../").Pager; }, pagerMeta);
 var PagerComponent = (function () {
     function PagerComponent() {
     }
     return PagerComponent;
 }());
 PagerComponent = __decorate([
-    Component({
+    core_1.Component({
         selector: 'Pager',
         template: '<ng-content></ng-content>'
     })
 ], PagerComponent);
-export { PagerComponent };
+exports.PagerComponent = PagerComponent;
 var PagerModule = (function () {
     function PagerModule() {
     }
     return PagerModule;
 }());
 PagerModule = __decorate([
-    NgModule({
+    core_1.NgModule({
         declarations: [PagerComponent],
-        imports: [NativeScriptFormsModule],
+        imports: [forms_1.NativeScriptFormsModule],
         exports: [PagerComponent]
     })
 ], PagerModule);
-export { PagerModule };
-//# sourceMappingURL=index.js.map
+exports.PagerModule = PagerModule;
