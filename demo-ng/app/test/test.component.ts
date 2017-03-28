@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Router } from '@angular/router';
+
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 @Component({
@@ -14,7 +16,7 @@ export class TestComponent implements OnInit {
     items: any;
     @ViewChild('pager') pager: any;
 
-    constructor() {
+    constructor(private router: Router) {
         this.items = new BehaviorSubject([
             {
                 title: "Slide 1",
@@ -53,7 +55,7 @@ export class TestComponent implements OnInit {
                 image: "http://img-cache.cdn.gaiaonline.com/6919f3c814890fd8710efbb9210527c1/http://i1035.photobucket.com/albums/a434/susanoo_takashi/natsu_dragneel___episode_166_by_kagomechan27-d5svkk4_zps567f559b.jpg"
             }
         ]);
-        this.numItems = this.items.value.length;
+        this.numItems = this.items.length;
     }
 
     ngOnInit(): void {
@@ -95,6 +97,10 @@ export class TestComponent implements OnInit {
     pageChanged(index: number) {
         console.log(`pageChanged ${JSON.stringify(index)}`);
         debugObj(index);
+    }
+
+    onShowDetails() {
+        this.router.navigateByUrl('detail');
     }
 }
 

@@ -8,6 +8,7 @@ import { AppRoutingModule } from "./app.routing";
 import { AppComponent } from "./app.component";
 
 import { TestComponent } from "./test/test.component";
+import { DetailComponent } from "./detail/detail.component";
 
 @NgModule({
     bootstrap: [
@@ -22,6 +23,7 @@ import { TestComponent } from "./test/test.component";
     declarations: [
         AppComponent,
         TestComponent,
+        DetailComponent,
     ],
     providers: [
     ],
