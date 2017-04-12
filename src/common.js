@@ -1,8 +1,14 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var dependency_observable_1 = require("ui/core/dependency-observable");
 var proxy_1 = require("ui/core/proxy");
 var view_1 = require("ui/core/view");
 var types = require("utils/types");
+exports.ITEMSLOADING = "itemsLoading";
+var knownTemplates;
+(function (knownTemplates) {
+    knownTemplates.itemTemplate = "itemTemplate";
+})(knownTemplates = exports.knownTemplates || (exports.knownTemplates = {}));
 var knownCollections;
 (function (knownCollections) {
     knownCollections.items = "items";
@@ -13,6 +19,11 @@ function onItemsChanged(data) {
         pager.updateNativeItems(data.oldValue, data.newValue);
     }
 }
+function onItemTemplateChanged(data) {
+    var accordion = data.object;
+    accordion.itemTemplateUpdated(data.oldValue, data.newValue);
+}
+;
 function onSelectedIndexChanged(data) {
     var pager = data.object;
     if (pager && pager.items && types.isNumber(data.newValue)) {
@@ -27,11 +38,20 @@ var Pager = (function (_super) {
         _this._pageSpacing = 0;
         return _this;
     }
-    Pager.prototype._addArrayFromBuilder = function (name, value) {
-        if (name === "items") {
-            this.items = value;
-        }
+    Pager.prototype._getData = function (index) {
+        var items = this.items;
+        return items.getItem ? items.getItem(index) : items[index];
     };
+    Object.defineProperty(Pager.prototype, "itemTemplate", {
+        get: function () {
+            return this._getValue(Pager.itemTemplateProperty);
+        },
+        set: function (value) {
+            this._setValue(Pager.itemTemplateProperty, value);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Pager.prototype, "items", {
         get: function () {
             return this._getValue(Pager.itemsProperty);
@@ -95,6 +115,7 @@ var Pager = (function (_super) {
 }(view_1.View));
 Pager.selectedIndexProperty = new dependency_observable_1.Property("selectedIndex", "Pager", new proxy_1.PropertyMetadata(0, dependency_observable_1.PropertyMetadataSettings.None, null, null, onSelectedIndexChanged));
 Pager.itemsProperty = new dependency_observable_1.Property("items", "Pager", new proxy_1.PropertyMetadata(undefined, dependency_observable_1.PropertyMetadataSettings.AffectsLayout, null, null, onItemsChanged));
+Pager.itemTemplateProperty = new dependency_observable_1.Property("itemTemplate", "Accordion", new proxy_1.PropertyMetadata(undefined, dependency_observable_1.PropertyMetadataSettings.AffectsLayout, onItemTemplateChanged));
 Pager.showNativePageIndicatorProperty = new dependency_observable_1.Property("showNativePageIndicator", "Pager", new proxy_1.PropertyMetadata(false));
 Pager.selectedIndexChangedEvent = "selectedIndexChanged";
 exports.Pager = Pager;
@@ -106,3 +127,4 @@ var PagerItem = (function (_super) {
     return PagerItem;
 }(view_1.View));
 exports.PagerItem = PagerItem;
+//# sourceMappingURL=common.js.map

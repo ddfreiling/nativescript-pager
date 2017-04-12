@@ -1,11 +1,13 @@
 import { View } from "ui/core/view";
 import * as common from "../common";
 export declare class Pager extends common.Pager {
+    itemTemplateUpdated(oldData: any, newData: any): void;
     private _orientation;
     private _options;
     private _views;
     private _transformer;
     private _ios;
+    _viewMap: Map<any, any>;
     private widthMeasureSpec;
     private heightMeasureSpec;
     private left;
@@ -26,10 +28,10 @@ export declare class Pager extends common.Pager {
     updateNativeIndex(oldIndex: number, newIndex: number): void;
     updateNativeItems(oldItems: View[], newItems: View[]): void;
     runUpdate(): void;
+    refresh(): void;
     getViewController(selectedIndex: number): UIViewController;
-    onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void;
+    measure(widthMeasureSpec: number, heightMeasureSpec: number): void;
     onLayout(left: number, top: number, right: number, bottom: number): void;
-    onLoaded(): void;
     onUnloaded(): void;
     _selectedIndexUpdatedFromNative(newIndex: number): void;
     _viewControllerRemovedFromParent(controller: PagerView): void;

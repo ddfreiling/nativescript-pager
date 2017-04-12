@@ -1,8 +1,17 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var view_1 = require("ui/core/view");
 var label_1 = require("ui/label");
 var color_1 = require("color");
+var types = require("utils/types");
 var common = require("../common");
+var builder_1 = require("ui/builder");
+var observable_1 = require("data/observable");
+function notifyForItemAtIndex(owner, nativeView, view, eventName, index) {
+    var args = { eventName: eventName, object: owner, index: index, view: view, ios: nativeView, android: undefined };
+    owner.notify(args);
+    return args;
+}
 global.moduleMerge(common, exports);
 var Pager = (function (_super) {
     __extends(Pager, _super);
@@ -14,6 +23,7 @@ var Pager = (function (_super) {
         _this.bottom = 0;
         _this.cachedViewControllers = [];
         _this._views = [];
+        _this._viewMap = new Map();
         var that = new WeakRef(_this);
         _this._orientation = 0;
         _this._transformer = 1;
@@ -38,6 +48,8 @@ var Pager = (function (_super) {
         }
         return _this;
     }
+    Pager.prototype.itemTemplateUpdated = function (oldData, newData) {
+    };
     Object.defineProperty(Pager.prototype, "views", {
         get: function () {
             return this._views;
@@ -88,6 +100,7 @@ var Pager = (function (_super) {
         }
     };
     Pager.prototype.runUpdate = function () { };
+    Pager.prototype.refresh = function () { };
     Pager.prototype.getViewController = function (selectedIndex) {
         var vc;
         if (this.cachedViewControllers[selectedIndex]) {
@@ -99,21 +112,28 @@ var Pager = (function (_super) {
         }
         var view;
         if (this.items && this.items.length) {
-            view = this.items[selectedIndex];
+            view = !types.isNullOrUndefined(this.itemTemplate) ? builder_1.parse(this.itemTemplate, this) : null;
+            var _args = notifyForItemAtIndex(this, view ? view._nativeView : null, view, common.ITEMSLOADING, selectedIndex);
+            view = view || _args.view;
+            if (view) {
+                var item = (typeof this.items.getItem === "function") ? this.items.getItem(selectedIndex) : this.items[selectedIndex];
+                view.bindingContext = new observable_1.Observable(item);
+            }
         }
         else {
             var lbl = new label_1.Label();
             lbl.text = "Pager.items not set.";
             view = lbl;
         }
-        vc.view = view.ios;
+        this._viewMap.set(selectedIndex, view);
         this.prepareView(view);
+        vc.view = view._nativeView;
         return vc;
     };
-    Pager.prototype.onMeasure = function (widthMeasureSpec, heightMeasureSpec) {
+    Pager.prototype.measure = function (widthMeasureSpec, heightMeasureSpec) {
         this.widthMeasureSpec = widthMeasureSpec;
         this.heightMeasureSpec = heightMeasureSpec;
-        _super.prototype.onMeasure.call(this, widthMeasureSpec, heightMeasureSpec);
+        _super.prototype.measure.call(this, widthMeasureSpec, heightMeasureSpec);
     };
     Pager.prototype.onLayout = function (left, top, right, bottom) {
         var _this = this;
@@ -122,14 +142,12 @@ var Pager = (function (_super) {
         this.top = top;
         this.right = right;
         this.bottom = bottom;
-        if (this.items && this.items.length > 0) {
-            this.items.forEach(function (item) {
-                _this.prepareView(item);
+        if (this._viewMap && this._viewMap.size > 0) {
+            this._viewMap.forEach(function (item) {
+                view_1.View.layoutChild(_this, item, 0, 0, right - left, bottom - top);
             });
             this._initNativeViewPager();
         }
-    };
-    Pager.prototype.onLoaded = function () {
     };
     Pager.prototype.onUnloaded = function () {
         this._ios.delegate = null;
@@ -289,3 +307,4 @@ var PagerItem = (function (_super) {
     return PagerItem;
 }(common.PagerItem));
 exports.PagerItem = PagerItem;
+//# sourceMappingURL=pager.js.map

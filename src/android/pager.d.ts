@@ -2,10 +2,12 @@ import { Property } from "ui/core/dependency-observable";
 import { View } from "ui/core/view";
 import * as common from "../common";
 export declare class Pager extends common.Pager {
+    itemTemplateUpdated(oldData: any, newData: any): void;
     private _android;
     private _pagerAdapter;
     private _views;
     private _transformer;
+    _viewMap: Map<any, any>;
     static pagesCountProperty: Property;
     constructor();
     views: Array<any>;
@@ -15,9 +17,11 @@ export declare class Pager extends common.Pager {
     readonly _nativeView: android.support.v4.view.ViewPager;
     readonly _childrenCount: number;
     _createUI(): void;
+    refresh(): void;
     updatePagesCount(value: number): void;
     updateNativeIndex(oldIndex: number, newIndex: number): void;
     updateNativeItems(oldItems: Array<View>, newItems: Array<View>): void;
+    onUnloaded(): void;
     _eachChildView(callback: (child: View) => boolean): void;
     transformer: any;
     updateAdapter(): void;
@@ -26,9 +30,9 @@ export declare class Pager extends common.Pager {
 export declare class PagerAdapter extends android.support.v4.view.PagerAdapter {
     private owner;
     constructor(owner: any);
-    instantiateItem(collection: android.view.ViewGroup, position: number): android.support.v4.view.ViewPager;
-    destroyItem(container: android.view.ViewGroup, position: number, object: any): void;
-    getCount(): number;
+    instantiateItem(collection: android.view.ViewGroup, position: number): any;
+    destroyItem(collection: android.view.ViewGroup, position: number, object: any): void;
+    getCount(): any;
     isViewFromObject(view: android.view.View, object: any): boolean;
 }
 export declare class TNSViewPager extends android.support.v4.view.ViewPager {

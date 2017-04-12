@@ -1,18 +1,31 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var dependency_observable_1 = require("ui/core/dependency-observable");
 var proxy_1 = require("ui/core/proxy");
+var types = require("utils/types");
 var common = require("../common");
 var app = require("application");
+var builder_1 = require("ui/builder");
+var observable_1 = require("data/observable");
+global.moduleMerge(common, exports);
+function notifyForItemAtIndex(owner, nativeView, view, eventName, index) {
+    var args = { eventName: eventName, object: owner, index: index, view: view, ios: undefined, android: nativeView };
+    owner.notify(args);
+    return args;
+}
 function onPagesCountChanged(data) {
     var item = data.object;
     item.updatePagesCount(item.pagesCount);
 }
-global.moduleMerge(common, exports);
 var Pager = (function (_super) {
     __extends(Pager, _super);
     function Pager() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this._viewMap = new Map();
+        return _this;
     }
+    Pager.prototype.itemTemplateUpdated = function (oldData, newData) {
+    };
     Object.defineProperty(Pager.prototype, "views", {
         get: function () {
             return this._views;
@@ -94,6 +107,11 @@ var Pager = (function (_super) {
             this._android.setPageMargin(this.pageSpacing);
         }
     };
+    Pager.prototype.refresh = function () {
+        if (this._android && this._pagerAdapter) {
+            this._pagerAdapter.notifyDataSetChanged();
+        }
+    };
     Pager.prototype.updatePagesCount = function (value) {
         if (this._android) {
             this._pagerAdapter.notifyDataSetChanged();
@@ -115,17 +133,15 @@ var Pager = (function (_super) {
             }
         }
     };
+    Pager.prototype.onUnloaded = function () {
+        this._viewMap.clear();
+        _super.prototype.onUnloaded.call(this);
+    };
     Pager.prototype._eachChildView = function (callback) {
-        if (this.items) {
-            var i;
-            var length = this.items.length;
-            var retVal;
-            for (i = 0; i < length; i++) {
-                retVal = callback(this.items[i]);
-                if (retVal === false) {
-                    break;
-                }
-            }
+        if (this._viewMap.size > 0) {
+            this._viewMap.forEach(function (view, key) {
+                callback(view);
+            });
         }
     };
     Object.defineProperty(Pager.prototype, "transformer", {
@@ -213,15 +229,34 @@ var PagerAdapter = (function (_super) {
         return global.__native(_this);
     }
     PagerAdapter.prototype.instantiateItem = function (collection, position) {
-        var item = this.owner.items[position];
-        var nativeView = item._nativeView;
-        collection.addView(nativeView);
-        return nativeView;
+        if (this.owner._viewMap.has(position)) {
+            var convertView = this.owner._viewMap.get(position) ? this.owner._viewMap.get(position)._nativeView : null;
+            if (convertView) {
+                collection.addView(convertView);
+                return convertView;
+            }
+        }
+        var view = !types.isNullOrUndefined(this.owner.itemTemplate) ? builder_1.parse(this.owner.itemTemplate, this.owner) : null;
+        var _args = notifyForItemAtIndex(this.owner, view ? view._nativeView : null, view, common.ITEMSLOADING, position);
+        view = view || _args.view;
+        if (view) {
+            view.bindingContext = new observable_1.Observable(this.owner._getData(position));
+            if (!view.parent) {
+                this.owner._addView(view);
+            }
+            this.owner._viewMap.set(position, view);
+        }
+        collection.addView(view._nativeView);
+        return view._nativeView;
     };
-    PagerAdapter.prototype.destroyItem = function (container, position, object) {
-        var item = this.owner.items[position];
-        var nativeView = item._nativeView;
-        container.removeView(nativeView);
+    PagerAdapter.prototype.destroyItem = function (collection, position, object) {
+        if (this.owner._viewMap.has(position)) {
+            var convertView = this.owner._viewMap.get(position) ? this.owner._viewMap.get(position) : null;
+            if (convertView && convertView._nativeView) {
+                collection.removeView(convertView._nativeView);
+                this.owner._viewMap.delete(position);
+            }
+        }
     };
     PagerAdapter.prototype.getCount = function () {
         return this.owner.items ? this.owner.items.length : 0;
@@ -260,3 +295,4 @@ var TNSViewPager = (function (_super) {
     return TNSViewPager;
 }(android.support.v4.view.ViewPager));
 exports.TNSViewPager = TNSViewPager;
+//# sourceMappingURL=pager.js.map
